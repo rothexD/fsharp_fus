@@ -1,0 +1,159 @@
+open System
+let r = Random()
+
+
+
+let pi = 3.1415926
+
+let area =
+    let radius = 5.0
+    pi * radius * radius
+
+
+let whatever =
+    let circles =
+        let count = 10.0
+        count * area
+
+    let squared =
+        circles * circles
+
+    squared + 100.0
+
+
+let tup = (1,"3")
+let (partOne,partTwo) = tup
+partOne * 2
+
+
+type Ellipse =
+    {
+        Major : float
+        Minor : float
+    }
+
+let ell = { Major = 5.0; Minor = 2.0 }
+
+let m = ell.Major
+let { Major = major } = ell
+major * 2.0
+
+let c = { ell with Minor = 100.0;}
+
+//let newElement 
+
+type Fruit =
+    | Apple
+    | Banana
+    | Kiwi of int
+    | Watermelon of string * Ellipse
+ 
+let myFruit = Watermelon ("water",ell)
+
+let toString = 
+    fun myFruit -> 
+        match myFruit with
+        | Apple -> "apple"
+        | Banana -> "banana"
+        | Kiwi _ -> "kwi"
+        | Watermelon(s,e) -> "watermelon"
+
+let toString' myFruit = 
+    match myFruit with
+    | Apple -> "apple"
+    | Banana -> "banana"
+    | Kiwi _ -> "kwi"
+    | Watermelon(s,e) -> "watermelon"
+
+
+let m2 = Watermelon ("water",ell)
+toString m2
+
+let foo tup =
+    let (a,b) = tup
+    a + b
+
+let foo2 (a,b,c,d) =
+    a + b + c + d
+
+let addCurried : int -> int -> int =
+    (fun b -> (fun a -> b + a))
+
+let addCurriedSyntacticHelper a b = a + b
+
+let add2 = (addCurried 2)
+let finalResult = add2 5
+
+open System.IO
+// function is curried
+let log (s : string) (text : string) = File.AppendAllText(s,text)
+
+// partial application
+let logInfo = log "info.txt"
+
+logInfo "started"
+logInfo "doing"
+logInfo "done"
+
+// function is tupled (uncurried)
+let log2 (s, text) = File.AppendAllText(s,text)
+
+let curry (f : 'a * 'b -> 'c) : ('a -> 'b -> 'c) =
+    fun firstArg secondArg -> f (firstArg,secondArg)
+
+// equivalent
+let curry' =
+    fun f -> 
+        (fun a b -> f (a,b))
+
+let logSuper = curry log2
+
+
+
+let makeTuple a b = (a,b)
+let tup1 : int -> int * int = makeTuple 1 
+let tup12 = tup1 2
+
+
+let div a b = a / b
+
+type DivResult = 
+    | Ok of int
+    | DivByZero
+
+let divSafe a b = 
+    if b = 0 then DivByZero else Ok (a / b)
+
+type Option<'a> =
+    | Some of 'a
+    | None
+
+let divSafe2 a b = 
+    if b = 0 then None else Some (a / b)
+
+let printResult (r : Option<int>) =
+    match r with
+    | None -> "no result"
+    | Some r -> sprintf "returned: %d" r
+
+let test a b =
+    let r = divSafe2 a b
+    match r with
+    | None -> None
+    | Some r -> Some (r + 2)
+
+
+let test2 a b =
+    let r = test a b
+    match r with
+    | None -> None
+    | Some r -> Some (r * 2)
+
+let map (f : 'a -> 'b) (o : Option<'a>)  : Option<'b> =
+    match o with
+    | None -> None
+    | Some v -> Some (f v)
+
+let divAndAdd a b = map ((*)2) (divSafe2 a b) 
+
+let divAndAdd2 a b = divSafe2 a b |> map ((*)2) 
