@@ -66,8 +66,10 @@ let  divsave (enumerator : int) (denominator : int) : (Option<int>) =
 //the optional value contains Some integer, the result should contain the integer times two. In case the optional value was
 //None, the result should be None.
 
-// See exercise 9
-
+let optionTimesTwo (a : Option<int>) : (Option<int>) =
+    match a with
+        | None -> None
+        | Some a -> Some(2*a)
 
 
 //Exercise 8: Mapping Options. (2 Points) Define a function optionMap of type
@@ -83,3 +85,5 @@ let optionMap (f : 'a -> 'b) (c : Option<'a>) : (Option<'b>) =
 //Exercise 9: Partial Application. (2+1 Points) Implement or re-implement Exercise 7 using the mapping function from
 //Exercise 8.
 //(You can submit Exercise 9 instead of Exercise 7 to get points for both Exercise 7 and Exercise 9.)
+
+let result = Some(2) |> optionMap (fun c -> 2*c)  
