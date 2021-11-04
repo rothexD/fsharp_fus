@@ -157,3 +157,49 @@ let map (f : 'a -> 'b) (o : Option<'a>)  : Option<'b> =
 let divAndAdd a b = map ((*)2) (divSafe2 a b) 
 
 let divAndAdd2 a b = divSafe2 a b |> map ((*)2) 
+
+
+
+//exercise 3
+
+//accumulator pattern in functional languages
+let rec rev2 (xs : list<'a>)(alreadyReversed : list<'a>)=
+    match xs with
+    | x::xs -> rev2 xs (x :: alreadyReversed)
+    | [] -> alreadyReversed
+
+let rec aggregate  (f: 'a -> 'b -> 'b -> 'b) (seed : 'b)(xs:list<'a>) =
+    match xs with
+    | [] -> seed
+    | x::xs -> f x seed (aggregate f seed xs)
+
+
+type Set<'a> =
+    | Empty
+    | Node of Set<'a> * 'a  * Set<'a>
+
+//o(log n)
+let rec add (v : 'a) (set : Set<'a>): Set<'a> =
+    match set with
+    | Empty -> Node(Empty,v,Empty)
+    | Node(left,label,right) ->
+        if(v = label)then set
+        elif v < label then Node(add v left ,label,right)
+        else Node(left,label,add v right)
+
+//o (log n)
+let rec contains (v : 'a)(set : Set<'a>): bool =
+    match set with
+    | Empty -> false
+    | Node(left,label,right) ->
+        if(v = label) then true
+        elif v < label then contains v left
+        else contains v right
+
+let ofList(xs: list<'a>) =
+    let rec ofListI(xc : list<'a>) (set : Set<'a>)=
+        match xc with
+        | [] -> set
+        | x::xd -> ofListI xd (add x set)
+    ofListI xs Empty
+
